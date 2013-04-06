@@ -1,0 +1,5 @@
+-check the stopping criteria for OMP
+-implement iterative DT
+-implement the averaging part of doing the screening
+-check the measure for performance, l2 error? sparsity? classificaion accuracy?
+
