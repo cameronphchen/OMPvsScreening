@@ -3,6 +3,8 @@
 %     dictionary: B; signal: x; error threshold: e; max number of iteration: kmax
 % Output:
 %     weight: w
+% using pseudoinverse to handle all kinds of singularity problem when projecting
+% signal on the selected dictionary
 
 function [w]=omp(B,x,e0,k0)
 
