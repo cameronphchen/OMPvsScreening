@@ -1,6 +1,4 @@
 % unit test for omp
-% simple toy example
-% assume dictionary is unit norm
 % by Cameron P.H. Chen @ Princeton
 
 

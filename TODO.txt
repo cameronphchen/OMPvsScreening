@@ -3,3 +3,8 @@
 -implement the averaging part of doing the screening
 -check the measure for performance, l2 error? sparsity? classificaion accuracy?
 
+
+HALFWAY:
+- calculate the number IDT has selected and use OMP to select the same amount of basis
+- calculate the l2 error rate between the represented signal and orignal signal
+- try to use OMP to follow the IDT and calculate the l2 error
