@@ -46,12 +46,80 @@ for i=1:10
         train_labels(tmp_train_idc(randsample(train_distri(i,:),trainSampleNum/10)));
 end 
 
-L2error=nan(60,1);
+L2error1=nan(60,1);
+L2error2=nan(60,1);
+
+% check lambda value
+u=-4:0.1:4;
+lambda_val = 10.^u;
+%lambda_val = [0.001 0.005 ];
+L2err_lambda = nan(length(lambda_val),1);
+l=0;
+for lambda = lambda_val 
+  fprintf('lambda:%f\n',lambda);
+  l=l+1;
+  for i=1:60
+    
+    %fprintf('i:%d\n',i);
+
+    [w1 k]=IDT(train_image_sample,test_image_sample(:,i),lambda);
+    L2error1(i,:)=norm(train_image_sample*w1-test_image_sample(:,i),2)/norm(test_image_sample(:,i),2);
+     
+    %%check the stopping criteria of OMP
+    % choose the same amount of basis as IDT, to be modified
+    %w2=omp(train_image_sample,test_image_sample(:,i),0,0,k);
+    %L2error2(i,:)=norm(train_image_sample*w2-test_image_sample(:,i),2)/norm(test_image_sample(:,i),2);
+  end
+  L2err_lambda(l) = mean(L2error1);
+end
 
 for i=1:60
-  fprintf('i:%d\n',i);
-  %%check the stopping criteria of OMP
-  w=omp(train_image_sample,test_image_sample(:,i),0,0,30);
-  L2error(i,:)=norm(train_image_sample*w-test_image_sample(:,i),2)/norm(test_image_sample(:,i),2);
+    fprintf('i:%d\n',i);
+
+    %%check the stopping criteria of OMP
+    % choose the same amount of basis as IDT, to be modified
+    w2=omp(train_image_sample,test_image_sample(:,i),0,0,k);
+    L2error2(i,:)=norm(train_image_sample*w2-test_image_sample(:,i),2)/norm(test_image_sample(:,i),2);
 end
+
+clf;
+
+% standard plot
+figure
+hold on;
+plot(lambda_val, L2err_lambda, 'b-')
+plot(lambda_val, mean(L2error2)*ones(length(lambda_val),1), 'r-')
+xlabel('lambda')
+ylabel('error (%)')
+legend('IDT','OMP')
+title('standard')
+hold off
+saveas(gcf, 'Plot_Standard', 'tiff') 
+
+% standard plot with log scale x axis
+figure
+hold on;
+plot(log(lambda_val), L2err_lambda, 'b-')
+plot(log(lambda_val), mean(L2error2)*ones(length(lambda_val),1), 'r-')
+xlabel('lambda')
+ylabel('error (%)')
+legend('IDT','OMP')
+title('logscale')
+hold off
+saveas(gcf, 'Plot_LogScale', 'tiff') 
+
+
+% semilog plot on x scale
+figure
+hold on
+semilogx(lambda_val, L2err_lambda, 'b-')
+semilogx(lambda_val, mean(L2error2)*ones(length(lambda_val),1), 'r-')
+xlabel('lambda')
+ylabel('error (%)')
+legend('IDT','OMP')
+title('semilogx')
+hold off
+saveas(gcf, 'Plot_SemilogPlot', 'tiff') 
+
+
 
