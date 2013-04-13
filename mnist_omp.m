@@ -63,6 +63,8 @@ for lambda = lambda_val
     %fprintf('i:%d\n',i);
 
     [w1 k]=IDT(train_image_sample,test_image_sample(:,i),lambda);
+    w2=omp(train_image_sample,test_image_sample(:,i),0,k); 
+    
     L2error1(i,:)=norm(train_image_sample*w1-test_image_sample(:,i),2)/norm(test_image_sample(:,i),2);
      
     %%check the stopping criteria of OMP
@@ -78,7 +80,7 @@ for i=1:60
 
     %%check the stopping criteria of OMP
     % choose the same amount of basis as IDT, to be modified
-    w2=omp(train_image_sample,test_image_sample(:,i),0,0,k);
+    w2=omp(train_image_sample,test_image_sample(:,i),0,k);
     L2error2(i,:)=norm(train_image_sample*w2-test_image_sample(:,i),2)/norm(test_image_sample(:,i),2);
 end
 
