@@ -46,24 +46,29 @@ for i=1:10
         train_labels(tmp_train_idc(randsample(train_distri(i,:),trainSampleNum/10)));
 end 
 
-L2error1=nan(60,1);
-L2error2=nan(60,1);
+L2error1=nan(testSampleNum,1);
+L2error2=nan(testSampleNum,1);
 
 % check lambda value
-u=-4:0.1:4;
+u=-5:0.1:5;
 lambda_val = 10.^u;
 %lambda_val = [0.001 0.005 ];
 L2err_lambda = nan(length(lambda_val),1);
 l=0;
+
+
+kmax=50;
+
 for lambda = lambda_val 
   fprintf('lambda:%f\n',lambda);
   l=l+1;
-  for i=1:60
+  for i=1:testSampleNum
     
-    %fprintf('i:%d\n',i);
+    fprintf('i:%d\n',i);
 
     [w1 k]=IDT(train_image_sample,test_image_sample(:,i),lambda);
-    w2=omp(train_image_sample,test_image_sample(:,i),0,k); 
+    %0.05-> 5% of the error rate between reconstructed signal and the orignal signal
+    w1=omp(train_image_sample,test_image_sample(:,i),0,kmax-k,find(w1~=0)'); 
     
     L2error1(i,:)=norm(train_image_sample*w1-test_image_sample(:,i),2)/norm(test_image_sample(:,i),2);
      
@@ -75,12 +80,12 @@ for lambda = lambda_val
   L2err_lambda(l) = mean(L2error1);
 end
 
-for i=1:60
+for i=1:testSampleNum
     fprintf('i:%d\n',i);
 
     %%check the stopping criteria of OMP
     % choose the same amount of basis as IDT, to be modified
-    w2=omp(train_image_sample,test_image_sample(:,i),0,k);
+    w2=omp(train_image_sample,test_image_sample(:,i),0,kmax,[]);
     L2error2(i,:)=norm(train_image_sample*w2-test_image_sample(:,i),2)/norm(test_image_sample(:,i),2);
 end
 
@@ -96,7 +101,7 @@ ylabel('error (%)')
 legend('IDT','OMP')
 title('standard')
 hold off
-saveas(gcf, 'Plot_Standard', 'tiff') 
+%saveas(gcf, 'Plot_Standard', 'tiff') 
 
 % standard plot with log scale x axis
 figure
@@ -108,7 +113,7 @@ ylabel('error (%)')
 legend('IDT','OMP')
 title('logscale')
 hold off
-saveas(gcf, 'Plot_LogScale', 'tiff') 
+%saveas(gcf, 'Plot_LogScale', 'tiff') 
 
 
 % semilog plot on x scale
@@ -121,7 +126,7 @@ ylabel('error (%)')
 legend('IDT','OMP')
 title('semilogx')
 hold off
-saveas(gcf, 'Plot_SemilogPlot', 'tiff') 
+%saveas(gcf, 'Plot_SemilogPlot', 'tiff') 
 
 
 

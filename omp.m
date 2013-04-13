@@ -13,7 +13,7 @@
 % signal on the selected dictionary
 % by Cameron P.H. Chen @ Princeton
 
-function [w]=omp(B,x,e0,iter)
+function [w]=omp(B,x,e0,iter,SS)
 
 assert(size(B,1)==size(x,1), 'dimension of B and x must agree')
 
@@ -21,19 +21,28 @@ assert(size(B,1)==size(x,1), 'dimension of B and x must agree')
 n=size(B,1);
 m=size(B,2);
 w=zeros(m,1);
-r=x;
-e=norm(r,2);
+if length(SS)==0
+    r=x;
+    e=norm(r,2);
+else
+    w(SS)= pinv(B(:,SS))*x;
+    r = x-B(:,SS)*w(SS);
+    e=norm(r,2);
+end
+
 B1=zeros(size(B));
-SS=[];
+%SS=[];
+
 
 if iter~=0 & e0==0
   for k=1:1:iter
+    %fprintf('k:%d\n',k);
     [value idc] =max(abs(B'*r));
     SS=sort([SS,idc]);
     w=zeros(m,1);
     w(SS)= pinv(B(:,SS))*x;
     r = x-B(:,SS)*w(SS);
-    e=norm(r,2);
+    e=norm(r,2)/norm(x,2);
   end
 elseif iter==0 & e0~=0
   while true
@@ -42,7 +51,7 @@ elseif iter==0 & e0~=0
     w=zeros(m,1);
     w(SS)= pinv(B(:,SS))*x;
     r = x-B(:,SS)*w(SS);
-    e=norm(r,2);
+    e=norm(r,2)/norm(x,2);
     if e <= e0 break; end;
   end
 end

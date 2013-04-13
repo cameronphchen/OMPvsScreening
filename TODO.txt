@@ -2,7 +2,8 @@ HALFWAY:
 - calculate the number IDT has selected and use OMP to select the same amount of basis
 - calculate the l2 error rate between the represented signal and orignal signal
 - try to use OMP to follow the IDT and calculate the l2 error
-
+- decide the stopping criteria for comparison, do we use k as k-sparse, or do we use a threshold. If using
+  threshold, how do we set the threshold
 FIRST PRIORITY:
 -Get the result of using the same number of OMP and IDT. Use IDT until it stops and then use OMP for the same 
 number of basis.
